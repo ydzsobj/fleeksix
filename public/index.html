@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+
+    <meta name="description" content="Letao Mall online shopping mall!" />
+    <meta name="Keywords" content="Letao Mall, Mall,Shoes, Bags,Clothes" />
+    <meta property="og:description" content="Letao Mall online shopping mall!"/>
+    <meta property="og:image" content="http://www.letaomall-ph.com/ydzs.png"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="http://www.letaomall-ph.com/"/>
+    <meta property="og:title" content="Letao Mall"/>
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <script src="https://cdn.jsdelivr.net/npm/@vant/touch-emulator"></script>
+    <title>Letao Mall</title>
+    <script>
+      document.querySelector("meta[property='og:url']").remove();
+      var head = document.getElementsByTagName('head');
+      var meta = document.createElement('meta')
+      meta.setAttribute('property', 'og:url')
+      meta.content = location.host
+      head[0].appendChild(meta)
+    </script>
+    <script>
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window,document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+    </script>
+  </head>
+  <body>
+    <noscript>
+      <strong>We're sorry but smilevue doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+    <script>
+      let htmlwidth = document.documentElement.clientWidth || document.body.clientWidth ;
+      let htmlDom = document.getElementsByTagName('html')[0];
+      if(htmlwidth>750){htmlwidth=750}
+      htmlDom.style.fontSize= htmlwidth/20 +'px';
+     
+    </script>
+    <style>
+      #app {
+        max-width: 600px;
+        margin: 0 auto;
+        font-family: Heiti,Heiti SC,DroidSans,DroidSansFallback,Arial,"Microsoft YaHei";
+        background-color: #fff;
+      }
+      /* #app .detail img {
+        width: 100%;
+        display: block
+      } */
+      .marginauto{
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .left50{
+        left: auto!important;
+        max-width: 600px;
+      }
+    </style>
+  </body>
+</html>
