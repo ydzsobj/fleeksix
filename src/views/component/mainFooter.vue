@@ -3,14 +3,14 @@
         <!-- <div class="new-sale-big">
             <img src="../../assets/images/zlt.jpg" style="width: 100%;">
         </div> -->
-        <div class="baozhang">
+        <!-- <div class="baozhang">
             <div class="buy-logo"><img src="../../assets/images/buy-logo.png"></div>
             <div class="buy-p">
             <h3>{{$t('mainFooter_1')}}</h3>
                 <p><em></em>{{$t('mainFooter_1_1')}} </p>
                 <p><em></em>{{$t('mainFooter_1_2')}}</p>
             </div>
-        </div>
+        </div> -->
         <div class="footmenu">
             <div class="footmenu-list">
                 <ul class="f-list">

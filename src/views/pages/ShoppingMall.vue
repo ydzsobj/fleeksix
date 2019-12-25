@@ -1,38 +1,97 @@
 <template>
     <div style="background-color: #fff;">
-        <top-nav :keywordsVal="keywords"></top-nav>
-        <div class='search left50'>
-            <div style="float: left;width: 22%;">
-               <!-- <van-icon name="location-o" style="padding-top: 5px;"/> -->
-               <van-dropdown-menu style="height: 54px">
-                   <van-dropdown-item v-model="value1" :options="option1"  @change="menuchange"/>
-               </van-dropdown-menu>
-               <!-- <van-icon name="arrow-down" /> -->
+        <!-- <top-nav :keywordsVal="keywords"></top-nav> -->
+        <div style="position:relative">
+            <div class='search left50'>
+                <div style="float: left;width: 22%;">
+                <!-- <van-icon name="location-o" style="padding-top: 5px;"/> -->
+                <van-dropdown-menu style="height: 54px">
+                    <van-dropdown-item v-model="value1" :options="option1"  @change="menuchange"/>
+                </van-dropdown-menu>
+                <!-- <van-icon name="arrow-down" /> -->
+                </div>
+            <van-search style="float: left;width: 75%;background-color:rgba(0,0,0,0)!important;" :placeholder="$t('searchProducts')" v-model="value" shape="round" @search="onSearch"/>
             </div>
-           <van-search style="float: left;width: 75%;" :placeholder="$t('searchProducts')" v-model="value" shape="round" @search="onSearch"/>
+            <div style="display:block;line-height:0">
+                <van-image 
+                :src="country.logo_url"
+                />
+            </div>
         </div>
-
         <!--swiper area-->
         <div class="swiper-area">
             <van-swipe :autoplay="3000" @change="onChange">
                 <van-swipe-item v-for="( banner ,index) in bannerPicArray" :key="index" >
                     <img v-lazy="banner.image" width="100%" @click="goGoodsPage(banner.good_id)"/>
                 </van-swipe-item>
-                <div class="custom-indicator" slot="indicator">
+                <!-- <div class="custom-indicator" slot="indicator">
                     {{ current + 1 }}/{{bannerPicArray.length}}
-                </div>
+                </div> -->
             </van-swipe>
+            
             <!-- <div class="swiper-span"></div> -->
         </div>  
+        <div  style="display:block;line-height:0">
+            <van-image
+            width="33.33%"
+            :src="this.man.image_url"
+            @click="golistPage(man.mallCategoryId)"
+            />
+            <van-image
+            width="33.33%"
+            :src="country.foreign_link_image_url"
+            />
+            <van-image
+            width="33.33%"
+            :src="this.woman.image_url"
+            @click="golistPage(woman.mallCategoryId)"
+            />
+        </div>
         <div>
-
+            <!-- <video :src="country.video_url" controls="controls" width="100%" style="display: block"/> -->
+            <video-tpl :src_tpl="country.video_url"></video-tpl>
+            <van-image
+            width="100%"
+            :src="this.woman.image_url"
+            />
+            <van-image
+            width="100%"
+            :src="this.module_1.image_url"
+            />
+        </div>
+        <div>
+            <div v-for="(cate,index) in category" :key="index">
+                <div class="category_title">
+                    <p>{{cate.mallCategoryName}}</p>
+                    <span>{{cate.desc}}</span>
+                </div>
+                <div style="position:relative">
+                    <div  @click="golistPage(cate.mallCategoryId,index)" >
+                        <van-swipe  @change="obj[index]" indicator-color="white" :ref="`swipe${index}`">
+                            <van-swipe-item v-for="( banner ,index) in cate.image_url_list" :key="index" >
+                                <img v-lazy="banner" width="100%"/>
+                            </van-swipe-item>
+                            <!-- <div class="custom-indicator" slot="indicator">
+                                {{ current + 1 }}/{{bannerPicArray.length}}
+                            </div> -->
+                        </van-swipe>
+                    </div>
+                    <div>
+                        <span class="left" @click="objClickRight(`swipe${index}`,index)"></span>
+                        <span class="right" @click="objClickLeft(`swipe${index}`,index)"></span>
+                    </div>
+                </div>
+            </div>
         </div>
         <!--type bar-->
-        <div class="type-bar">
+        <!-- <div class="type-bar">
             <div v-for="(cate,index) in category" :key="index"  @click="golistPage(cate.mallCategoryId,index)">
                 <img :src="cate.image_url" width="90%">
                 <span>{{cate.mallCategoryName}}</span>
             </div>
+        </div> -->
+        <div>
+
         </div>
         <mainFooter></mainFooter>
         
@@ -46,6 +105,7 @@
  
     import floorComponent from '../component/floorComponent'
     import mainFooter from '../component/mainFooter'
+    import videoTpl from '../component/video'
     import { toMoney , int,num} from '@/filter/moneyFilter.js'
     import goodsInfo from '../component/goodsInfoComponent'
     import topNav from '../component/topNav'
@@ -54,6 +114,12 @@
     export default {
         data() {
             return {
+                index_obj:[],
+                obj:[],
+                man:[],
+                woman:[],
+                module_1:[],
+                country:[],
                 value1: 2,
                 option1: [
                   { text: this.$t('yn'), value: 1 },
@@ -74,11 +140,6 @@
                 category:[],
                 adBanner:'',
                 recommendGoods:[],
-                floorData:[],
-                floor1:[],
-                floor2:[],
-                floor3:[],
-                floorName:{},
                 hotGoods:[],  //热卖商品
                 nav_img:[require('../../assets/images/cartempty.png')],
                 current: 0,
@@ -96,7 +157,7 @@
                 return num(money)
             }
         },
-        components:{swiper,swiperSlide,floorComponent,goodsInfo,mainFooter,topNav},
+        components:{swiper,swiperSlide,floorComponent,goodsInfo,mainFooter,topNav,videoTpl},
         created(){
             this.value1=this.$store.state.country_id||2
             axios({
@@ -106,14 +167,28 @@
             })
             .then(response=>{
                 // console.log(response)
+                console.log(this.index_obj)
+                var that =this
                 if(response.status==200){
-                    this.category=response.data.data.category;
+                    for (let i = 0; i < response.data.data.category.length-3; i++) {
+                        that.obj.push(function(a){that.index_obj[i]=a})
+                        that.index_obj.push(0)
+                    }
+
+                    that.category=response.data.data.category;
                     // this.adBanner = response.data.data.advertesPicture.PICTURE_ADDRESS;
-                    this.bannerPicArray= response.data.data.slides;
+                    that.bannerPicArray= response.data.data.slides;
                     // this.recommendGoods = response.data.data.recommend;
-                    this.floorData = response.data.data.floorData;
-                    this.hotGoods = response.data.data.hotGoods;
-            
+                    that.hotGoods = response.data.data.hotGoods;
+                    that.country = response.data.data.country;
+                    that.man=response.data.data.category[response.data.data.category.length-1]
+                    that.woman=response.data.data.category[response.data.data.category.length-2]
+                    that.module_1=response.data.data.category[response.data.data.category.length-3]
+                    that.category.splice(that.category.length-3,3)
+                    // this.category.pop()
+                    // this.category.pop()
+                    // console.log(this.category.pop())
+                    // console.log(that.category)
                 }
             })
             .catch(error=>{
@@ -155,11 +230,19 @@
             },
             tocart(){
                 this.$router.push({name:'Cart',query:{lg: this.$store.state.lang}})
+            },
+            objClickLeft(a,i){
+                console.log(this.index_obj)
+                this.$refs[a][0].swipeTo(this.index_obj[i]+1)
+            },
+            objClickRight(a,i){
+                
+                this.$refs[a][0].swipeTo(this.index_obj[i]-1)
             }
         },
         mounted(){
-            let winHeight = document.documentElement.clientHeight
-            document.getElementById("navLeft").style.height=winHeight -46 +'px'
+            // let winHeight = document.documentElement.clientHeight
+            // document.getElementById("navLeft").style.height=winHeight -46 +'px'
         },
         computed: {
            cartNumCount() {
@@ -252,10 +335,53 @@
     margin-bottom: 20px;
 }
 .search{
-    position: fixed;
-    top: 45px;
+    position: absolute;
+    top: 0;
     z-index: 1;
     width: 100%;
+    background-color: hsla(0,0%,96.1%,.4);
+    /* opacity: 0.7; */
+}
+.search >>> .van-dropdown-menu,.search >>> .van-search{
+    background-color:rgba(0,0,0,0)!important
+}
+.search >>> .van-search__content{
+    opacity: 0.6;
+}
+[class*='van-hairline']::after{
+    border: none
 }
 
+.right,.left{
+    position: absolute;
+    top: 50%;
+    width: 27px;
+    height: 44px;
+    z-index: 10;
+    cursor: pointer;
+    background-size: 27px 44px;
+    background-position: 50%;
+    background-repeat: no-repeat;
+    padding: 30px 15px;
+    margin-top: -52px;
+    outline: none;
+}
+.right{
+    right: 10px;
+    left: auto;
+    background-image: url("data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 27 44'><path d='M27 22L5 44l-2.1-2.1L22.8 22 2.9 2.1 5 0l22 22z' fill='%23fff'/></svg>")
+}
+.left{
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 27 44'%3E%3Cpath d='M0 22L22 0l2.1 2.1L4.2 22l19.9 19.9L22 44 0 22z' fill='%23fff'/%3E%3C/svg%3E")
+}
+.category_title p{
+    margin: 0;
+    padding-left: 8px;
+    font-size: 18px
+}
+.category_title span{
+    font-size: 14px;
+    padding-left: 8px;
+    color: #7d7e80
+}
 </style>
