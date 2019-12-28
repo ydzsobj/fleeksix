@@ -7,7 +7,7 @@
         </van-nav-bar>
         <div id="navLeft" class="left50" v-show="navLeft_show">
             <van-cell size="large" is-link  :title="$t('home')" @click="golistPage('home')" />
-            <van-cell size="large" is-link  :title="cate.mallCategoryName" v-for="(cate,index) in category" :key="index"  @click="golistPage(cate.mallCategoryId,index)" />
+            <van-cell size="large" is-link  :title="cate.mallCategoryName" v-for="(cate,index) in category" :key="index"  @click="golistPage(cate.mallCategoryId,cate.mallCategoryName)" />
         </div>
         <van-overlay 
         z-index="2"
@@ -15,7 +15,7 @@
         @click="show = false,navLeft_show=false"
         />
         <!-- <van-search placeholder="请输入搜索关键词" v-model="value" shape="round" @search="onSearch" class='search left50'/> -->
-        <div style="height:100px"></div>
+        <div style="height:46px"></div>
     </div>
 </template>
 
@@ -68,6 +68,14 @@ export default {
         //     }
         // },
         golistPage(id,index) {
+            let query = this.$router.history.current.query;
+            let path = this.$router.history.current.path;
+            //对象的拷贝
+            let newQuery = JSON.parse(JSON.stringify(query));
+            newQuery.categorySubId = id;
+            newQuery.name = index;
+            this.$router.push({ path, query: newQuery });
+
             this.show=false
             this.navLeft_show=false
             // console.log(this.$route.name)
@@ -76,7 +84,7 @@ export default {
             }else if(id=='home'){
                 this.$router.push({name:'ShoppingMall',query:{lg: this.$store.state.lang} })
             }else{
-                this.$emit('nav_index',id)
+                this.$emit('nav_index',[id,index])
             }
         },
         onClickNavLeft(){

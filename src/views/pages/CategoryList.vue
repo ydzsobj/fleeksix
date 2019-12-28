@@ -4,7 +4,10 @@
             <van-nav-bar :title="$t('classlist')"/>
         </div> -->
         <top-nav @nav_index="nav_index"  :keywords-val="keywords"></top-nav>
-        <van-search :placeholder="$t('searchProducts')" v-model="keywords" shape="round" @search="onSearch" class='search left50'/>
+        <div class="top_name">
+            {{top_name}}
+        </div>
+        <!-- <van-search :placeholder="$t('searchProducts')" v-model="keywords" shape="round" @search="onSearch" class='search left50'/> -->
         <div>
           <van-row>
               <van-col>
@@ -76,6 +79,7 @@
     export default {
         data() {
             return {
+                top_name:'',
                 error: false,
                 loading: false,   //是否处于加载状态
                 finished: false,  //是否已加载完所有数据
@@ -111,32 +115,35 @@
            },
         },
         created(){
-            // console.log(this.$route.params.categorySubId)
+            // console.log(this.$route)
             this.keywords=this.$route.params.keywords
+            
+            
             // this.getCategory();
            
         },
         activated(){
-            // console.log(this.$route.params)
-            if( this.$route.params.categorySubId){
+            this.top_name=this.$route.query.name
+            console.log(this.$route)
+            if( this.$route.query.categorySubId){
                 this.keywords=''
                 this.page=1
                 this.categoryIndex=this.$route.params.index
-                this.categorySubId=this.$route.params.categorySubId
+                this.categorySubId=this.$route.query.categorySubId
                 this.finished = false
                 this.isLoading= false
                 this.loading = false
                 this.goodList= [] 
                 //this.onLoad()
             }
-            if(this.$route.params.keywords==''||this.$route.params.keywords){
-                this.keywords=this.$route.params.keywords
-                this.categorySubId=''
-                this.page=1
-                this.goodList= [] 
-                this.finished = false
-                this.isLoading = true
-            }
+            // if(this.$route.params.keywords==''||this.$route.params.keywords){
+            //     this.keywords=this.$route.params.keywords
+            //     this.categorySubId=''
+            //     this.page=1
+            //     this.goodList= [] 
+            //     this.finished = false
+            //     this.isLoading = true
+            // }
         },
         mounted(){
             let winHeight = document.documentElement.clientHeight
@@ -151,20 +158,21 @@
                 this.finished = false
                 this.isLoading = false
             },
-            nav_index(categoryId){
-                // console.log(categoryId)
+            nav_index(categoryId,name){
+                this.top_name=categoryId[1]
+                console.log(categoryId)
                 this.error = false
                     this.loading = true
                     this.keywords=''
                 // if(this.thrott){
                     this.thrott= false
                     this.goodList= [] 
-                   this.categoryIndex=categoryId
+                   this.categoryIndex=categoryId[0]
                    this.page=1
                    this.finished = false
                    this.isLoading = true
-                   this.categorySubId = categoryId
-                   this.onLoad(categoryId)
+                   this.categorySubId = categoryId[0]
+                   this.onLoad(categoryId[0])
                 // }
             },
             onLoad(index) {      //上拉加载
@@ -179,6 +187,7 @@
                     this.onLoad()
             },
             getGoodList(index){
+                // console.log(this.categorySubId)
                 var data ={}
                 if(this.keywords==''&&this.categorySubId){
                     data={
@@ -196,7 +205,11 @@
                   axios({
                       url:url.getGoodsListByCategorySubID,
                     method:'get',
-                    params:data
+                    params:{
+                        category_id:this.categorySubId,
+                        country_id:this.$store.state.country_id,
+                        page:this.page
+                    }
                 })
                 .then(response=>{
                  this.page++
@@ -284,6 +297,13 @@
         top: 45px;
         z-index: 1;
         width: 100%;
+    }
+    .top_name{
+        height: 54px;
+        line-height: 54px;
+        padding-left: 16px;
+        font-size: 16px;
+        color: #666
     }
    
 </style>

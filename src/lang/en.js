@@ -33,7 +33,7 @@ export default {
     back: 'Back',
     clearCart: 'Clear Cart',
     clear: 'Clear',
-    payOnDelivery: 'Pay On Delivery', //货到付款
+    payOnDelivery: 'Cash On Delivery & Free Shipping', //货到付款
     name: 'Name',
     nameholder: 'Please Input Your Name',
     phoneNumber: 'Phone Number',
@@ -120,7 +120,7 @@ export default {
     mainFooter_contact:'Contact Us',
     mainFooter_2:'. All rights reserved',
     buyNow:'Buy Now',
-    seek:'seek',
+    seek:'search',
     searchProducts:'Search Products',
     seekErr:'Didn\'t find product results',
     seekErr_1:'Please re-enter product requests!'

@@ -10,6 +10,7 @@
                     left-icon="search"
                     size="large"
                     :placeholder="$t('searchProducts')"
+                    @keyup.enter="onClickRight"
                 /></div>
             <!-- <van-icon name="search" slot="right" @click="onSeek" /> -->
         </van-nav-bar>
@@ -125,7 +126,8 @@ export default {
                     method:'get',
                     params:{
                         keywords:this.keywords,
-                        page:this.page
+                        page:this.page,
+                        country_id:this.$store.state.country_id
                     }
                 })
                 .then(response=>{
@@ -167,10 +169,10 @@ export default {
     }
 }
 </script>
-<style scope>
+<style scoped>
     .van-nav-bar .van-icon {
         font-size: 26px;
-        color:#ef3470
+        /* color:#ef3470 */
     }
     .van-nav-bar__title {
         max-width: 66%;

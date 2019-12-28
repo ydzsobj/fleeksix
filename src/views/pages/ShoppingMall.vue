@@ -10,7 +10,7 @@
                 </van-dropdown-menu>
                 <!-- <van-icon name="arrow-down" /> -->
                 </div>
-            <van-search style="float: left;width: 75%;background-color:rgba(0,0,0,0)!important;" :placeholder="$t('searchProducts')" v-model="value" shape="round" @search="onSearch"/>
+            <van-search style="float: left;width: 75%;background-color:rgba(0,0,0,0)!important;" :placeholder="$t('searchProducts')" v-model="value" shape="round" @focus="onSearch"/>
             </div>
             <div style="display:block;line-height:0">
                 <van-image 
@@ -35,19 +35,20 @@
             <van-image
             width="33.33%"
             :src="this.man.image_url"
-            @click="golistPage(man.mallCategoryId)"
+            @click="golistPage(man.mallCategoryId,man.mallCategoryName)"
             />
             <van-image
             width="33.33%"
             :src="country.foreign_link_image_url"
+            @click="goForeign(country.foreign_link)"
             />
             <van-image
             width="33.33%"
             :src="this.woman.image_url"
-            @click="golistPage(woman.mallCategoryId)"
+            @click="golistPage(woman.mallCategoryId,woman.mallCategoryName)"
             />
         </div>
-        <div>
+        <div class="middle">
             <!-- <video :src="country.video_url" controls="controls" width="100%" style="display: block"/> -->
             <video-tpl :src_tpl="country.video_url"></video-tpl>
             <van-image
@@ -57,6 +58,7 @@
             <van-image
             width="100%"
             :src="this.module_1.image_url"
+            @click="golistPage(module_1.mallCategoryId,module_1.mallCategoryName)"
             />
         </div>
         <div>
@@ -66,7 +68,7 @@
                     <span>{{cate.desc}}</span>
                 </div>
                 <div style="position:relative">
-                    <div  @click="golistPage(cate.mallCategoryId,index)" >
+                    <div  @click="golistPage(cate.mallCategoryId,cate.mallCategoryName)" >
                         <van-swipe  @change="obj[index]" indicator-color="white" :ref="`swipe${index}`">
                             <van-swipe-item v-for="( banner ,index) in cate.image_url_list" :key="index" >
                                 <img v-lazy="banner" width="100%"/>
@@ -159,7 +161,8 @@
         },
         components:{swiper,swiperSlide,floorComponent,goodsInfo,mainFooter,topNav,videoTpl},
         created(){
-            this.value1=this.$store.state.country_id||2
+            this.value1=this.$store.state.country_id||1
+            console.log(this.$store.state.country_id)
             axios({
                 url:url.getShopingMallInfo,
                 method:'get',
@@ -201,18 +204,20 @@
                 location.href = location.origin+'/?lg='+ (value==1? 'ind-BA' : 'en-PHP')
             },
             onSearch(v){
+                console.log(1)
+                this.$router.push({name:'seek',query:{lg: this.$store.state.lang}})
             // console.log(v)
-            if(this.$route.name !='CategoryList'&&v!=''){
-                this.$router.push({name:'CategoryList',query:{lg: this.$store.state.lang},params:{keywords:v}})
-                this.$emit('nav_Search',v)
-            }else{
-                this.$emit('nav_Search',v)
-            }
+            // if(this.$route.name !='CategoryList'&&v!=''){
+            //     this.$router.push({name:'CategoryList',query:{lg: this.$store.state.lang},params:{keywords:v}})
+            //     this.$emit('nav_Search',v)
+            // }else{
+            //     this.$emit('nav_Search',v)
+            // }
         },
             golistPage(id,index) {
                 this.show=false
                 this.navLeft_show=false
-                this.$router.push({name:'CategoryList',query:{lg: this.$store.state.lang},params:{categorySubId:id,index:index}})
+                this.$router.push({name:'CategoryList',query:{lg: this.$store.state.lang,categorySubId:id,name:index},params:{categorySubId:id,index:index}})
             },
             goGoodsPage(id) {
                 // console.log(id)
@@ -238,6 +243,9 @@
             objClickRight(a,i){
                 
                 this.$refs[a][0].swipeTo(this.index_obj[i]-1)
+            },
+            goForeign(a){
+                window.location.href=a
             }
         },
         mounted(){
@@ -383,5 +391,8 @@
     font-size: 14px;
     padding-left: 8px;
     color: #7d7e80
+}
+.middle .van-image {
+    display: block;
 }
 </style>
