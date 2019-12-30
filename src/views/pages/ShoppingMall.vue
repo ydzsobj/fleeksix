@@ -53,7 +53,7 @@
             <video-tpl :src_tpl="country.video_url"></video-tpl>
             <van-image
             width="100%"
-            :src="this.woman.image_url"
+            :src="country.shipping_image_url"
             />
             <van-image
             width="100%"
@@ -68,10 +68,10 @@
                     <span>{{cate.desc}}</span>
                 </div>
                 <div style="position:relative">
-                    <div  @click="golistPage(cate.mallCategoryId,cate.mallCategoryName)" >
+                    <div  @click="golistPage(cate.mallCategoryId,cate.mallCategoryName)"  class="swiper-area" >
                         <van-swipe  @change="obj[index]" indicator-color="white" :ref="`swipe${index}`">
                             <van-swipe-item v-for="( banner ,index) in cate.image_url_list" :key="index" >
-                                <img v-lazy="banner" width="100%"/>
+                                <img :src="banner" width="100%"/>
                             </van-swipe-item>
                             <!-- <div class="custom-indicator" slot="indicator">
                                 {{ current + 1 }}/{{bannerPicArray.length}}
@@ -394,5 +394,8 @@
 }
 .middle .van-image {
     display: block;
+}
+.middle img{
+    width: 100%;
 }
 </style>
